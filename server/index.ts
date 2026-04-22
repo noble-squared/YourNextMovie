@@ -9,6 +9,7 @@ import { getMovieSimilarity, getMovieDisSimilarity,
   getUserMovieSimilarityScore, getUserMovieDisSimilarityScore
 } from './compareMovies.ts';
 import type { UserRecommendationRequest } from '../shared/user.ts';
+import { filterTMDBMovies } from './filterMovies.ts';
 
 //https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status#client_error_responses
 
@@ -107,7 +108,7 @@ app.get('/userdata', (c) => {
 */
 //#endregion
 
-app.post('/api/get-filtered-movies', async (c) => {
+app.get('/api/get-filtered-movies', async (c) => {
   const parseResult = filterSchema.safeParse(c.req.query());
 
   if(!parseResult.success) {
@@ -115,12 +116,13 @@ app.post('/api/get-filtered-movies', async (c) => {
   }
 
   const filters = parseResult.data;
-
-  let queryString = `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}${filters.title ? `&query=${filters.title}` : ""}${filters.genre ? `&with_genres=${filters.genre}` : ""}${filters.year ? `&primary_release_year=${filters.year}` : ""}`;
-  //queryString += 
+  const queryUrl = new URL('https://api.themoviedb.org/3/search/movie');
+  queryUrl.searchParams.set('api_key', apiKey ?? '');
+  queryUrl.searchParams.set('query', filters.title);
+  queryUrl.searchParams.set('include_adult', String(filters.includeAdult));
 
   try {
-    const res = await fetch(queryString);
+    const res = await fetch(queryUrl.toString());
 
     if (!res.ok) {
       console.error(`TMDB request failed with status ${res.status}`);
@@ -131,16 +133,11 @@ app.post('/api/get-filtered-movies', async (c) => {
     }
 
     const data = await res.json() as TMDBSearchResponse;
+    const filteredData = filterTMDBMovies(data, filters);
 
-    if(data.results.length === 0) {
-      console.error("No results");
-      return c.json({
-        ok: false,
-        error: "No results",
-      }, 400);
-    }
-
-    return c.json(data);
+    return c.json({
+      ...filteredData,
+    });
 
   } catch (error) {
     console.log(error);
@@ -297,7 +294,7 @@ app.get('/api/get-similar-movies/:movieID', async (c) => {
 app.get('/api/get-different-movies/:movieID', async (c) => {
   const { movieID } = c.req.param(); 
   try {
-    const res = await fetch(`https://api.themoviedb.org/3/movie/${movieID}/similar?api_key=${apiKey}`);
+    const res = await fetch(`https://api.themoviedb.org/3/movie/${movieID}?api_key=${apiKey}`);
 
     if(!res.ok){
       console.error(`TMDB request failed with status ${res.status}`);
@@ -358,7 +355,7 @@ app.post('/api/get-user-recommendations/:movieID', async (c) => {
   const { liked, disliked_genres, liked_genres, watchedMovies } = body;
 
   try {
-    const res = await fetch(`https://api.themoviedb.org/3/movie/${movieID}/similar?api_key=${apiKey}`);
+    const res = await fetch(`https://api.themoviedb.org/3/movie/${movieID}?api_key=${apiKey}`);
 
     if(!res.ok){
       console.error(`TMDB request failed with status ${res.status}`);
@@ -398,15 +395,15 @@ app.post('/api/get-user-recommendations/:movieID', async (c) => {
       } as RankedMovie;
     }));
 
-    rankedMovies.filter((movie) => {
+    const filteredRankedMovies = rankedMovies.filter((movie) => {
       return !watchedMovies.includes(movie.movie.id);
     });
 
-    rankedMovies.sort((a, b) => b.ranking - a.ranking);
+    filteredRankedMovies.sort((a, b) => b.ranking - a.ranking);
 
     return c.json({ 
       ok: true, 
-      movies: rankedMovies 
+      movies: filteredRankedMovies 
     });
   } catch (error) {
     if(error instanceof Error){

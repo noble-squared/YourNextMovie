@@ -71,7 +71,7 @@ export function getUserMovieSimilarityScore(
     const popularity = comparisonMovie.popularity;
 
     return (
-        1 - (genreScore*genreModifier)
+                genreScore*genreModifier
         + ogLanguage*ogLanguageModifier 
         + popularity*popularityModifier 
       );

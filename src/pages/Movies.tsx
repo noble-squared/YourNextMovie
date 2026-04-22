@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {z} from 'zod';
+import { z } from 'zod';
 import type { CompleteMovie } from '../../shared/MovieTypes'
+import { Container, Row, Col } from 'react-bootstrap';
 import MiniMovieCard from '../components/MiniMovieCard';
 
 import { useNavigate } from 'react-router-dom';
 import filterSchema from '../../shared/FilterSchema'
 import movieGenres from '../../shared/movieGenres'
+import { useAuth } from '../contexts/AuthContext';
 
 
 //Had to ask AI for help here
@@ -17,6 +19,7 @@ type FilterFormOutput = z.output<typeof filterSchema>;
 
 const MoviesPage: React.FC = () => {
     const navigate = useNavigate();
+    const { user } = useAuth();
 
     const [movies, setMovies] = useState<CompleteMovie[]>([]);
     const [searched, setSearched] = useState(false);
@@ -27,17 +30,36 @@ const MoviesPage: React.FC = () => {
     const searchForm = useForm<FilterFormValues, undefined, FilterFormOutput>({
         resolver: zodResolver(filterSchema),
         defaultValues: {
-            title: '',
+            includeAdult: false,
             genre: '',
             year: undefined,
         },
     });
 
+    useEffect(() => {
+        searchForm.setValue('includeAdult', user?.see_adult ?? false);
+    }, [searchForm, user]);
+
     //const onSearch = async (values: FilterFormValues) => { 
     const onSearch = async (values: FilterFormOutput) => { 
         try {
+            setError('');
             setLoading(true);
-            const res = await fetch('/api/get-movies');
+            const params = new URLSearchParams();
+
+            params.set('title', values.title);
+
+            if (values.genre) {
+                params.set('genre', values.genre);
+            }
+
+            if (values.year) {
+                params.set('year', values.year.toString());
+            }
+
+            params.set('includeAdult', String(values.includeAdult));
+
+            const res = await fetch(`/api/get-filtered-movies?${params.toString()}`);
 
             if (!res.ok) {
                 console.error(res);
@@ -51,6 +73,7 @@ const MoviesPage: React.FC = () => {
                 console.log("Title: " + values.title);
                 console.log("Genre: " + values.genre);
                 console.log("Release year: " + values.year);
+                console.log("Adult: " + values.includeAdult);
             }
         } catch (error) {
             if(error instanceof Error){
@@ -75,15 +98,24 @@ const MoviesPage: React.FC = () => {
             { searched ? (
                 <>
                     <button onClick={() => setSearched(false)}>Clear search</button>
-                    <ul>
-                        {movies.map((movie) => (
-                            <li key={movie.id || 268}>
-                                <button onClick={() => navigate(`/movie/${movie.id ? movie.id : 268}`)}>
-                                    <MiniMovieCard movie={movie} />
-                                </button>
-                            </li>
-                        ))}
-                    </ul>
+                    {movies.length === 0 ? (
+                        <p>No movies found. Try changing your filters.</p>
+                    ) : (
+                        <p>Click on a movie to see more details and get recommendations.</p>
+                    )}
+                    <Container fluid>
+                        <Row>
+                            {movies.map((movie) => (
+                                <Col key={movie.id}
+                                    xs={12} sm={6} md={4} lg={3} xl={2}
+                                >
+                                    <button onClick={() => navigate(`/movie/${movie.id ? movie.id : 268}`)}>
+                                        <MiniMovieCard movie={movie} />
+                                    </button>
+                                </Col>
+                            ))}
+                        </Row>
+                    </Container>
                 </>
             ) : (
                 <>
@@ -98,6 +130,7 @@ const MoviesPage: React.FC = () => {
                                 <input 
                                     id="search-title"
                                     type="text"
+                                    required
                                     placeholder="To Kill a Mockingbird"
                                     {...searchForm.register('title')}
                                 />
@@ -139,6 +172,26 @@ const MoviesPage: React.FC = () => {
                                 {searchForm.formState.errors.year && (
                                     <div className="label">
                                         {searchForm.formState.errors.year.message}
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className='search-adult'>
+                                <label htmlFor="search-adult" className="label">
+                                    Allow adult movies
+                                </label>
+                                <input
+                                    id="search-adult"
+                                    type="checkbox"
+                                    {...searchForm.register('includeAdult')}
+                                />
+                                {user ? (
+                                    <div className="label">
+                                        Defaults to your profile preference.
+                                    </div>
+                                ) : (
+                                    <div className="label">
+                                        Disabled by default unless you turn it on.
                                     </div>
                                 )}
                             </div>

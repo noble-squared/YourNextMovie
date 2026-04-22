@@ -4,6 +4,8 @@ import  MiniMovieCard from './MiniMovieCard.tsx';
 import { useAuth } from '../contexts/AuthContext'
 import { useState } from 'react';
 import type { UserRecommendationRequest } from '../../shared/user';
+import { Container, Row, Col } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 interface ExpandedMovieProps {
   movie: SingleMovie;
@@ -15,12 +17,20 @@ const ExpandedMovieComponent: React.FC<ExpandedMovieProps> = ({ movie }) => {
     const [recommendedMovies, setRecommendedMovies] = useState<RankedMovie[] | undefined>(undefined);
     const [askedForRecommendations, setAskedForRecommendations] = useState(false);
 
-    const { user } = useAuth();
+    const { user, addWatchedMovie } = useAuth();
+
+    const navigate = useNavigate();
 
     const getGenreNames = (genres: Genre[]): string => {
         return genres.map((genre) => {
             return genre.name || "Unknown Genre";
         }).join(', ');
+    }
+
+    const onRecMovieClick = (movieID: number) => {
+        navigate(`/movie/${movieID}`);
+        setAskedForRecommendations(false);
+        setRecommendedMovies(undefined);
     }
 
     const onLike = async () => { 
@@ -29,14 +39,21 @@ const ExpandedMovieComponent: React.FC<ExpandedMovieProps> = ({ movie }) => {
         setInternalLoading(true);
         setError("");
 
+        if (user) {
+            try {
+                await addWatchedMovie(movie.id);
+            } catch (watchError) {
+                console.error('Failed to update watched movies:', watchError);
+            }
+        }
+
         const res = user ? (
-            await fetch('/api/dislike-movie', {
+            await fetch(`/api/get-user-recommendations/${movie.id}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    movieId: movie.id,
                     liked_genres: user.liked_genres,
                     disliked_genres: user.disliked_genres,
                     watchedMovies: user.watched_movies,
@@ -64,14 +81,21 @@ const ExpandedMovieComponent: React.FC<ExpandedMovieProps> = ({ movie }) => {
         setInternalLoading(true);
         setError("");
 
+        if (user) {
+            try {
+                await addWatchedMovie(movie.id);
+            } catch (watchError) {
+                console.error('Failed to update watched movies:', watchError);
+            }
+        }
+
         const res = user ? (
-            await fetch('/api/dislike-movie', {
+            await fetch(`/api/get-user-recommendations/${movie.id}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    movieId: movie.id,
                     liked_genres: user.liked_genres,
                     disliked_genres: user.disliked_genres,
                     watchedMovies: user.watched_movies,
@@ -96,12 +120,17 @@ const ExpandedMovieComponent: React.FC<ExpandedMovieProps> = ({ movie }) => {
     const safeOGGenres = Array.isArray(movie.genres) ? movie.genres : [];
     const genreLabel = safeOGGenres.length > 0 ? getGenreNames(safeOGGenres) : "Unknown Genre";
 
+    const posterUrl = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+        : '/assets/grey_square.jpg';
+
     return (
         <div className="expanded-movie">
             <h2>{movie.title}</h2>
+            <img src={posterUrl}  />
             <h3>{genreLabel}</h3>
             <p>{movie.overview}</p>
 
+            {user && <p>Rate this movie to add it to your watched list.</p>}
             <button onClick={onLike}>I like this movie</button>
             <button onClick={onDislike}>I dislike this movie</button>
             {error && 
@@ -114,12 +143,20 @@ const ExpandedMovieComponent: React.FC<ExpandedMovieProps> = ({ movie }) => {
                     {recommendedMovies && recommendedMovies.length > 0 ? (
                         <div className="recommended-movies">
                             <h3>Recommended Movies:</h3>
-                            {recommendedMovies.map((recommendedMovie) => (
-                                <div key={recommendedMovie.movie.id}>
-                                    <p>Ranking: {recommendedMovie.ranking}</p>
-                                    <MiniMovieCard movie={recommendedMovie.movie} />
-                                </div>
-                            ))}
+                            <Container fluid>
+                                <Row>
+                                    {recommendedMovies.map((recommendedMovie) => (
+                                        <Col key={recommendedMovie.movie.id}
+                                            xs={12} sm={6} md={4} lg={3} xl={2}
+                                        >
+                                            <p>Ranking: {recommendedMovie.ranking}</p>
+                                            <button onClick={() => onRecMovieClick(recommendedMovie.movie.id)}>
+                                                <MiniMovieCard movie={recommendedMovie.movie} />
+                                            </button>
+                                        </Col>
+                                    ))}
+                                </Row>
+                            </Container>
                         </div>
                     ): (
                         <>
