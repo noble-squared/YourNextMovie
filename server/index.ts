@@ -5,7 +5,10 @@ import { users } from './users.ts';
 //import type { User } from '../shared/user.ts';
 import filterSchema from '../shared/FilterSchema.ts';
 import type { CompleteMovie, RankedMovie, SingleMovie, TMDBSearchResponse } from '../shared/MovieTypes.ts';
-import { getMovieSimilarity, getMovieDisSimilarity } from './compareMovies.ts';
+import { getMovieSimilarity, getMovieDisSimilarity,
+  getUserMovieSimilarityScore, getUserMovieDisSimilarityScore
+} from './compareMovies.ts';
+import type { UserRecommendationRequest } from '../shared/user.ts';
 
 //https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status#client_error_responses
 
@@ -325,6 +328,78 @@ app.get('/api/get-different-movies/:movieID', async (c) => {
         movie: movie,
         ranking: score,
       } as RankedMovie;
+    });
+
+    rankedMovies.sort((a, b) => b.ranking - a.ranking);
+
+    return c.json({ 
+      ok: true, 
+      movies: rankedMovies 
+    });
+  } catch (error) {
+    if(error instanceof Error){
+      console.error(error.message);
+      return c.json({ 
+        ok: false,
+        error: error.message,
+      }, 400);
+    }
+    return c.json({
+      ok: false,
+      error: error,
+    }, 502);
+  }
+});
+
+app.post('/api/get-user-recommendations/:movieID', async (c) => {
+  const { movieID } = c.req.param();
+  const body = await c.req.json<UserRecommendationRequest>();
+
+  const { liked, disliked_genres, liked_genres, watchedMovies } = body;
+
+  try {
+    const res = await fetch(`https://api.themoviedb.org/3/movie/${movieID}/similar?api_key=${apiKey}`);
+
+    if(!res.ok){
+      console.error(`TMDB request failed with status ${res.status}`);
+      return c.json({
+        ok: false,
+        error: `TMDB request failed with status ${res.status}`,
+      }, 502);
+    }
+
+    const OGMovie = await res.json() as CompleteMovie;
+
+    const similarityRes = await fetch(`https://api.themoviedb.org/3/movie/${movieID}/similar?api_key=${apiKey}`);
+
+    if(!similarityRes.ok){
+      console.error(`TMDB request failed with status ${similarityRes.status}`);
+      return c.json({
+        ok: false,
+        error: `TMDB request failed with status ${similarityRes.status}`,
+      }, 502);
+    } 
+
+    const similarityData = await similarityRes.json() as TMDBSearchResponse;
+
+    const rankedMovies : RankedMovie[] = liked ? (similarityData.results.map((movie) => {
+      const score = getUserMovieSimilarityScore(liked_genres, disliked_genres, OGMovie, movie);
+
+      return {
+        movie: movie,
+        ranking: score,
+      } as RankedMovie;
+    })) : (similarityData.results.map((movie) => {
+      const score = getUserMovieDisSimilarityScore(liked_genres, disliked_genres, OGMovie, movie);
+
+      return {
+        movie: movie,
+        ranking: score,
+      } as RankedMovie;
+    }));
+
+    rankedMovies.filter((movie) => {
+      return !watchedMovies.includes(movie.movie.id);
     });
 
     rankedMovies.sort((a, b) => b.ranking - a.ranking);

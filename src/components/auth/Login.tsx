@@ -7,6 +7,10 @@ const Login: React.FC = () => {
  
     const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
+        if(!username || !password) {
+            setError('All fields are required');
+            return;
+        }
         // will eventually replace with actual API call. Stretch goal.
         const isAuthenticated = true;
         if (isAuthenticated) {
@@ -30,7 +34,9 @@ const Login: React.FC = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
             />
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {error && <div className="error">
+                <p>{error}</p>
+            </div>}
             <button type="submit">Login</button>
         </form>
     );

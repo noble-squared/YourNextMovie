@@ -1,6 +1,7 @@
 import type React from 'react';
 import type { Genre, RankedMovie, SingleMovie } from '../../shared/MovieTypes';
 import  MiniMovieCard from './MiniMovieCard.tsx';
+import { useAuth } from '../contexts/AuthContext'
 import { useState } from 'react';
 
 interface ExpandedMovieProps {

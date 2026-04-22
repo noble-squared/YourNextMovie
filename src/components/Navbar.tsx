@@ -1,9 +1,10 @@
 import type React from 'react';
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 const Navbar: React.FC = () => {
-  const [ authenticated, setAuthenticated ] = useState(false)
+  const { user, loading } = useAuth();
+
   return (
     <nav className="navbar bg-base-200">
       <div className="flex-1">
@@ -12,17 +13,17 @@ const Navbar: React.FC = () => {
         </Link>
       </div>
       <div className="otherLinks">
-        {authenticated ? (
+        {(!loading && user) ? (
           <>
-          <p>Welcome, person who shouldn't be seeing this! This logic is unimplemented!</p>
+            <p>Logout</p>
+            <p>View Profile</p>
           </>
         )
         : (
         <>
-          <Link to="/login" className="LoginButton">
+          <Link to="/authentication" className="LoginButton">
             Log in
           </Link>
-          <p>Sign Up</p>
         </>
         )}
       </div>
