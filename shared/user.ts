@@ -10,3 +10,10 @@ export interface DatabaseMovie {
     id: number;
     liked: boolean;
 }
+
+export interface UserRecommendationRequest {
+    liked: boolean;
+    liked_genres: string[];
+    disliked_genres: string[];
+    watchedMovies: number[];
+}

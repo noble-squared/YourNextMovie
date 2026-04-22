@@ -3,15 +3,20 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import MoviesPage from './pages/Movies.tsx';
-import Login from './components/Login.tsx';
+import AuthenticationPage from './pages/Authentication.tsx';
+import ProfilePage from './pages/Profile.tsx';
 import Layout from './components/Layout.tsx';
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import IndividualMoviePage from './pages/IndividualMovie.tsx';
 
+import { AuthProvider } from './contexts/AuthContext'
+import ProtectedRoute from './components/auth/ProtectedRoute'
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter>
-      <Layout>
+    <AuthProvider>
+      <BrowserRouter>
+        <Layout>
           <Routes>
             <Route
               path="/"
@@ -26,9 +31,17 @@ createRoot(document.getElementById('root')!).render(
               }
             />
             <Route
-              path="/login"
+              path="/authentication"
               element={
-                <Login />
+                <AuthenticationPage />
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <ProfilePage />
+                </ProtectedRoute>
               }
             />
             <Route 
@@ -38,7 +51,8 @@ createRoot(document.getElementById('root')!).render(
               }
             />
           </Routes>
-      </Layout>
-    </BrowserRouter>
+        </Layout>
+      </BrowserRouter>
+    </AuthProvider>
   </StrictMode>,
 )
