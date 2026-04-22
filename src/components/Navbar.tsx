@@ -21,6 +21,30 @@ const Navbar: React.FC = () => {
   };
 
   return (
+    <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a className="navbar-brand" href="/">Your Next Movie</a>
+      <div className="otherLinks">
+        {(!loading && user) ? (
+          <>
+            <div><button type="button" onClick={handleLogout}>Logout</button></div>
+            <Link to="/profile">View Profile</Link>
+          </>
+        )
+        : (
+        <>
+          <Link to="/authentication" className="LoginButton">
+            Log in
+          </Link>
+        </>
+        )}
+      </div>
+    </nav>
+  );
+};
+
+export default Navbar;
+
+/*return (
     <nav className="navbar bg-base-200">
       <div className="flex-1">
         <Link to="/" className="HomeButton">
@@ -43,7 +67,4 @@ const Navbar: React.FC = () => {
         )}
       </div>
     </nav>
-  );
-};
-
-export default Navbar;
+  );*/

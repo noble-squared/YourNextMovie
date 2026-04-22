@@ -61,9 +61,11 @@
   flex-direction: column;
   box-sizing: border-box;
 }
-
+/* After importing in the bootstrap styles, the background turned to white. I couldn't figure out why, so I had to ask AI here */
 body {
   margin: 0;
+  background: var(--bg);
+  color: var(--text);
 }
 
 h1,

@@ -2,7 +2,21 @@ import {z} from 'zod';
 import { movieGenreNames } from './movieGenres.ts';
 
 const filterSchema = z.object({
-    title: z.string().max(100, "Title cannot be longer than 100 characters").optional(),
+    title: z.string()
+        .trim()
+        .min(1, 'Title is required')
+        .max(100, "Title cannot be longer than 100 characters"),
+    includeAdult: z.preprocess((val) => {
+        if (val === 'true') {
+            return true;
+        }
+
+        if (val === 'false' || val === '' || val === undefined) {
+            return false;
+        }
+
+        return val;
+    }, z.boolean()),
     genre: z.preprocess((val) => {
         if(val === "") {
             return undefined;

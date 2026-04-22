@@ -6,6 +6,7 @@ const Login: React.FC = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const { signIn, loading } = useAuth();
 
@@ -14,18 +15,24 @@ const Login: React.FC = () => {
     const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError('');
+        setIsSubmitting(true);
         if(!username || !password) {
             setError('All fields are required');
+            setIsSubmitting(false);
             return;
         }
-        const { data, error } = await signIn(username, password);
+        try {
+            const { data, error } = await signIn(username, password);
 
-        if (error) {
-            setError(error);
-            return;
-        } else {
+            if (error) {
+                setError(error);
+                return;
+            }
+
             console.log(data);
             navigate('/profile');
+        } finally {
+            setIsSubmitting(false);
         }
     };
  
@@ -49,8 +56,8 @@ const Login: React.FC = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Password"
                 />
-                <button disabled={loading} type="submit">
-                    {loading ? "Loading..." : "Login"}
+                <button disabled={loading || isSubmitting} type="submit">
+                    {isSubmitting ? "Loading..." : "Login"}
                 </button>
             </form>
         </>

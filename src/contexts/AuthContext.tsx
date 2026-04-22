@@ -10,6 +10,10 @@ import type { AuthResponseData } from '../../shared/authTypes'
 type AuthContextType = {
   user: AuthUser | null
   loading: boolean
+  addWatchedMovie: (movieId: number) => Promise<void>,
+  updateLikedGenres: (liked_genres: string[]) => Promise<void>,
+  updateDislikedGenres: (disliked_genres: string[]) => Promise<void>,
+  updateSeeAdult: (see_adult: boolean) => Promise<void>,
   signUp: (
     username: string,
     password: string,
@@ -26,9 +30,13 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>({
   user: null,
   loading: true,
+  addWatchedMovie: async () => {},
   signUp: async () => ({ data: null, error: null }),
   signIn: async () => ({ data: null, error: null }),
   signOut: async () => {},
+  updateLikedGenres: async () => {},
+  updateDislikedGenres: async () => {},
+  updateSeeAdult: async () => {},
 });
 
 export const useAuth = () => {
@@ -51,8 +59,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const { data, error } = await supabase
       .from('profiles')
       .select('full_name, username, see_adult, liked_genres, disliked_genres, watched_movies')
-      //.select('*')
-      //.limit(1);
       .eq('id', authUser.id)
       .maybeSingle();
     
@@ -165,9 +171,99 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setUser(null)
   }
 
+  const addWatchedMovie = async (movieId: number) => {
+    if (!user) {
+      return
+    }
+
+    const watchedMovies = Array.isArray(user.watched_movies) ? user.watched_movies : []
+    if (watchedMovies.includes(movieId)) {
+      return
+    }
+
+    const updatedWatchedMovies = [...watchedMovies, movieId]
+    const { error } = await supabase
+      .from('profiles')
+      .update({ watched_movies: updatedWatchedMovies })
+      .eq('id', user.id)
+
+    if (error) {
+      throw error
+    }
+
+    setUser({
+      ...user,
+      watched_movies: updatedWatchedMovies,
+    })
+  }
+
+  const updateLikedGenres = async (liked_genres: string[]) => {
+    if (!user) {
+      return
+    }
+
+    const { error } = await supabase
+      .from('profiles')
+      .update({ liked_genres })
+      .eq('id', user.id)
+
+    if (error) {
+      throw error
+    }
+
+    setUser({
+      ...user,
+      liked_genres,
+    })
+  }
+
+   const updateDislikedGenres = async (disliked_genres: string[]) => {
+    if (!user) {
+      return
+    }
+
+    const { error } = await supabase
+      .from('profiles')
+      .update({ disliked_genres })
+      .eq('id', user.id)
+
+    if (error) {
+      throw error
+    }
+
+    setUser({
+      ...user,
+      disliked_genres,
+    })
+  }
+
+   const updateSeeAdult = async (see_adult: boolean) => {
+    if (!user) {
+      return
+    }
+
+    const { error } = await supabase
+      .from('profiles')
+      .update({ see_adult })
+      .eq('id', user.id)
+
+    if (error) {
+      throw error
+    }
+
+    setUser({
+      ...user,
+      see_adult,
+    })
+  }
+
   const value = {
     user,
     loading,
+    addWatchedMovie,
+    updateLikedGenres,
+    updateDislikedGenres,
+    updateSeeAdult,
     signUp,
     signIn,
     signOut,
