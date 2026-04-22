@@ -1,14 +1,14 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import { supabase } from '../lib/supabase'
 import type { User } from '@supabase/supabase-js'
-import type { AuthContextUserData } from './AuthContextTypes'
+import type { AuthContextUserData, AuthUser, UserProfileData } from './AuthContextTypes'
 import type { AuthResponseData } from '../../shared/authTypes'
 
 //I'm using this guide to help me, as I've never really worked with Context and auth before
 // https://programmify.org/guides/getting-started-supabase-auth-complete-walkthrough/
 
 type AuthContextType = {
-  user: User | null
+  user: AuthUser | null
   loading: boolean
   signUp: (
     username: string,
@@ -44,14 +44,61 @@ type AuthProviderProps = {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<AuthUser | null>(null)
   const [loading, setLoading] = useState(true)
+
+  const getProfileData = async (authUser: User): Promise<UserProfileData> => {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('full_name, username, see_adult, liked_genres, disliked_genres, watched_movies')
+      //.select('*')
+      //.limit(1);
+      .eq('id', authUser.id)
+      .maybeSingle();
+    
+    console.log('Profile query result:', data, error);
+
+    if (error) {
+      console.error('Error loading profile data:', error.message)
+      return {
+        full_name: '',
+        username: '',
+        see_adult: false,
+        liked_genres: [],
+        disliked_genres: [],
+        watched_movies: [],
+      }
+    }
+
+    return {
+      full_name: data?.full_name || '',
+      username: data?.username || '',
+      see_adult: data?.see_adult === true,
+      liked_genres: Array.isArray(data?.liked_genres) ? data.liked_genres : [],
+      disliked_genres: Array.isArray(data?.disliked_genres) ? data.disliked_genres : [],
+      watched_movies: Array.isArray(data?.watched_movies) ? data.watched_movies : [],
+    }
+  }
+
+  //AI helped me with this one. I was getting an error with loading, and while it fixed that problem (removed a couple setLoading() calls in this file), it implemented this too
+  const hydrateUserWithProfile = async (authUser: User | null): Promise<AuthUser | null> => {
+    if (!authUser) {
+      return null
+    }
+
+    const profileData = await getProfileData(authUser)
+    return {
+      ...authUser,
+      ...profileData,
+    }
+  }
 
   useEffect(() => {
     // Get initial session
     const getInitialSession = async () => {
       const { data: { session } } = await supabase.auth.getSession()
-      setUser(session?.user ?? null)
+      const hydratedUser = await hydrateUserWithProfile(session?.user ?? null)
+      setUser(hydratedUser)
       setLoading(false)
     }
 
@@ -60,7 +107,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
-        setUser(session?.user ?? null)
+        const hydratedUser = await hydrateUserWithProfile(session?.user ?? null)
+        setUser(hydratedUser)
         setLoading(false)
       }
     )
@@ -71,8 +119,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   // Sign up function
   const signUp = async (username: string, password: string, metadata: AuthContextUserData = {}) => {
     try {
-      setLoading(true)
-
       const { data, error } = await supabase.auth.signUp({
         email: `${username}@fake.local`,
         password,
@@ -88,15 +134,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             return { data: null, error: error.message }
         }
       return { data: null, error: String(error) }
-    } finally {
-      setLoading(false)
     }
   }
 
   // Sign in function
   const signIn = async (username: string, password: string) => {
     try {
-      setLoading(true)
       const { data, error } = await supabase.auth.signInWithPassword({
         email: `${username}@fake.local`,
         password
@@ -109,26 +152,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         return { data: null, error: error.message }
       }
       return { data: null, error: String(error) }
-    } finally {
-      setLoading(false)
     }
   }
 
   // Sign out function
   const signOut = async () => {
-    try {
-      setLoading(true)
-      const { error } = await supabase.auth.signOut()
-      if (error) throw error
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error('Error signing out:', error.message)
-      } else {
-        console.error('Error signing out:', error)
-      }
-    } finally {
-      setLoading(false)
+    const { error } = await supabase.auth.signOut()
+    if (error) {
+      throw error
     }
+
+    setUser(null)
   }
 
   const value = {

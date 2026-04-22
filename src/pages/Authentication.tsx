@@ -1,5 +1,5 @@
 import type React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import Login from '../components/auth/Login';
 import SignUp from '../components/auth/SignUp';
@@ -10,13 +10,14 @@ const AuthenticationPage: React.FC = () => {
     const navigate = useNavigate();
     const { user, loading } = useAuth();
 
-    if (loading) {
-        return <p>Loading...</p>;
-    }
+    useEffect(() => {
+        if (user) {
+            navigate('/profile');
+        }
+    }, [user, navigate]);
 
-    if (user && !loading) {
-        //TODO: navigate to profiles page
-        navigate('/movies');
+    if (loading && !user) {
+        return <p>Loading...</p>;
     }
 
     return (

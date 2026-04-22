@@ -23,6 +23,10 @@ const SignUp: React.FC = () => {
             setError('All fields are required');
             return;
         }
+        if (username.length < 3) {
+            setError('Username must be at least 3 characters long');
+            return;
+        }
         if(password !== confirmPassword) {
             setError('Passwords do not match');
             return;
@@ -42,56 +46,59 @@ const SignUp: React.FC = () => {
             setError(error);
             return;
         } else {
-            //TODO: navigate to profiles page
-            navigate('/movies');
+            navigate('/profile');
         }
     };
  
     return (
-        <form onSubmit={handleSubmit}>
-            <input
-                type="text"
-                id="username"
-                name="username"
-                required
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Username"
-            />
-            <input
-                type="text"
-                id="fullname"
-                name="fullname"
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Your name"
-            />
-            <input
-                type="password"
-                id="password"
-                name="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password"
-            />
-            <input
-                type="password"
-                id="confirmPassword"
-                name="confirmPassword"
-                required
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Confirm Password"
-            />
-            {error && <div className="error">
-                <p>{error}</p>
-            </div>}
-            <button disabled={loading} type="submit">
-                {loading ? "Loading..." : "Sign Up"}
-            </button>
-        </form>
+        <>
+            {error && (
+                <div className="error">
+                    <p>{error}</p>
+                </div>
+            )}
+            <form onSubmit={handleSubmit}>
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    required
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="Username"
+                />
+                <input
+                    type="text"
+                    id="fullname"
+                    name="fullname"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Your name"
+                />
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Password"
+                />
+                <input
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Confirm Password"
+                />
+                <button disabled={loading} type="submit">
+                    {loading ? "Loading..." : "Sign Up"}
+                </button>
+            </form>
+        </>
     );
 };
  

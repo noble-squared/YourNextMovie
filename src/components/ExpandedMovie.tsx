@@ -3,6 +3,7 @@ import type { Genre, RankedMovie, SingleMovie } from '../../shared/MovieTypes';
 import  MiniMovieCard from './MiniMovieCard.tsx';
 import { useAuth } from '../contexts/AuthContext'
 import { useState } from 'react';
+import type { UserRecommendationRequest } from '../../shared/user';
 
 interface ExpandedMovieProps {
   movie: SingleMovie;
@@ -13,6 +14,8 @@ const ExpandedMovieComponent: React.FC<ExpandedMovieProps> = ({ movie }) => {
     const [error, setError] = useState<string>("");
     const [recommendedMovies, setRecommendedMovies] = useState<RankedMovie[] | undefined>(undefined);
     const [askedForRecommendations, setAskedForRecommendations] = useState(false);
+
+    const { user } = useAuth();
 
     const getGenreNames = (genres: Genre[]): string => {
         return genres.map((genre) => {
@@ -26,7 +29,21 @@ const ExpandedMovieComponent: React.FC<ExpandedMovieProps> = ({ movie }) => {
         setInternalLoading(true);
         setError("");
 
-        const res = await fetch(`/api/get-similar-movies/${movie.id}`);
+        const res = user ? (
+            await fetch('/api/dislike-movie', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    movieId: movie.id,
+                    liked_genres: user.liked_genres,
+                    disliked_genres: user.disliked_genres,
+                    watchedMovies: user.watched_movies,
+                    liked: true,
+                } as UserRecommendationRequest),
+            }
+        )) : ( await fetch(`/api/get-similar-movies/${movie.id}`));
 
         if(!res.ok){
             console.error(res);
@@ -47,7 +64,21 @@ const ExpandedMovieComponent: React.FC<ExpandedMovieProps> = ({ movie }) => {
         setInternalLoading(true);
         setError("");
 
-        const res = await fetch(`/api/get-different-movies/${movie.id}`);
+        const res = user ? (
+            await fetch('/api/dislike-movie', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    movieId: movie.id,
+                    liked_genres: user.liked_genres,
+                    disliked_genres: user.disliked_genres,
+                    watchedMovies: user.watched_movies,
+                    liked: false,
+                } as UserRecommendationRequest),
+            }
+        )) : ( await fetch(`/api/get-different-movies/${movie.id}`));
 
         if(!res.ok){
             console.error(res);
