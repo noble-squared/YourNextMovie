@@ -10,6 +10,7 @@ describe('FilterForm', () => {
         const result = filterSchema.safeParse(emptyData);
         expect(result.success).toBeFalsy();
 
+
         //expect(result.data).toEqual(emptyData); // Assert parsed data is as expected
     });
 

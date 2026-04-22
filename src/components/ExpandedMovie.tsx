@@ -27,6 +27,12 @@ const ExpandedMovieComponent: React.FC<ExpandedMovieProps> = ({ movie }) => {
         }).join(', ');
     }
 
+    const onRecMovieClick = (movieID: number) => {
+        navigate(`/movie/${movieID}`);
+        setAskedForRecommendations(false);
+        setRecommendedMovies(undefined);
+    }
+
     const onLike = async () => { 
         setAskedForRecommendations(true);
         setRecommendedMovies([]);
@@ -144,7 +150,7 @@ const ExpandedMovieComponent: React.FC<ExpandedMovieProps> = ({ movie }) => {
                                             xs={12} sm={6} md={4} lg={3} xl={2}
                                         >
                                             <p>Ranking: {recommendedMovie.ranking}</p>
-                                            <button onClick={() => navigate(`/movies/${recommendedMovie.movie.id}`)}>
+                                            <button onClick={() => onRecMovieClick(recommendedMovie.movie.id)}>
                                                 <MiniMovieCard movie={recommendedMovie.movie} />
                                             </button>
                                         </Col>
