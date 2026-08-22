@@ -1,16 +1,42 @@
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
+  --def-banner: #993E00;
+  --def-text: #6b6375;
+  --def-text-h: #08060d;
+  --def-bg: #FA9552;
+  --def-border: #e5e4e7;
+  --def-code-bg: #f4f3ec;
+  --def-accent: #aa3bff;
+  --def-accent-bg: rgba(170, 59, 255, 0.1);
+  --def-accent-border: rgba(170, 59, 255, 0.5);
+  --def-shadow:
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  --def-social-bg: rgba(244, 243, 236, 0.5);
 
+  --toggle-banner: #993E00;
+  --toggle-text: #9ca3af;
+  --toggle-text-h: #f3f4f6;
+  --toggle-bg: #16171d;
+  --toggle-border: #2e303a;
+  --toggle-code-bg: #1f2028;
+  --toggle-accent: #c084fc;
+  --toggle-accent-bg: rgba(192, 132, 252, 0.15);
+  --toggle-accent-border: rgba(192, 132, 252, 0.5);
+  --toggle-shadow:
+    rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+  --toggle-social-bg: rgba(47, 48, 58, 0.5);
+
+  --banner: var(--def-banner);
+  --text: var(--def-text);
+  --text-h: var(--def-text-h);
+  --bg: var(--def-bg);
+  --border: var(--def-border);
+  --code-bg: var(--def-code-bg);
+  --accent: var(--def-accent);
+  --accent-bg: var(--def-accent-bg);
+  --accent-border: var(--def-accent-border);
+  --shadow: var(--def-shadow);
+  --social-bg: var(--def-social-bg);
+  
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
@@ -32,22 +58,49 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
+    --def-text: #9ca3af;
+    --def-text-h: #f3f4f6;
+    --def-bg: #16171d;
+    --def-border: #2e303a;
+    --def-code-bg: #1f2028;
+    --def-accent: #c084fc;
+    --def-accent-bg: rgba(192, 132, 252, 0.15);
+    --def-accent-border: rgba(192, 132, 252, 0.5);
+    --def-shadow:
       rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+    --def-social-bg: rgba(47, 48, 58, 0.5);
+
+    --toggle-banner: #993E00;
+    --toggle-text: #6b6375;
+    --toggle-text-h: #08060d;
+    --toggle-bg: #FA9552;
+    --toggle-border: #e5e4e7;
+    --toggle-code-bg: #f4f3ec;
+    --toggle-accent: #aa3bff;
+    --toggle-accent-bg: rgba(170, 59, 255, 0.1);
+    --toggle-accent-border: rgba(170, 59, 255, 0.5);
+    --toggle-shadow:
+      rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+    --toggle-social-bg: rgba(244, 243, 236, 0.5);
   }
 
   #social .button-icon {
     filter: invert(1) brightness(2);
   }
+}
+
+:has(#color-toggle:checked){
+  --banner: var(--toggle-banner);
+  --text: var(--toggle-text);
+  --text-h: var(--toggle-text-h);
+  --bg: var(--toggle-bg);
+  --border: var(--toggle-border);
+  --code-bg: var(--toggle-code-bg);
+  --accent: var(--toggle-accent);
+  --accent-bg: var(--toggle-accent-bg);
+  --accent-border: var(--toggle-accent-border);
+  --shadow: var(--toggle-shadow);
+  --social-bg: var(--toggle-social-bg);
 }
 
 #root {
@@ -61,6 +114,7 @@
   flex-direction: column;
   box-sizing: border-box;
 }
+
 /* After importing in the bootstrap styles, the background turned to white. I couldn't figure out why, so I had to ask AI here */
 body {
   margin: 0;
