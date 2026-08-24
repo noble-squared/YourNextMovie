@@ -8,9 +8,13 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <div className="layout">
+    <div id="layout">
       <Navbar />
-      <main>{children}</main>
+      <main>
+        <div id='main-content'>
+          {children}
+        </div>
+      </main>
     </div>
   );
 };

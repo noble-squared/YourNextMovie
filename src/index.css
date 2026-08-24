@@ -118,15 +118,18 @@
 }
 
 #root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
   text-align: center;
-  border-inline: 1px solid var(--border);
   min-height: 100svh;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+}
+
+#main-content {
+  width: 80%;
+  /*border-inline: 1px solid var(--border);*/
+  max-width: 100%;
+  margin: 0 auto;
 }
 
 /* After importing in the bootstrap styles, the background turned to white. I couldn't figure out why, so I had to ask AI here */
@@ -134,6 +137,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
+  margin-bottom: 200px;
 }
 
 h1,
