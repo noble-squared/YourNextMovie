@@ -8,28 +8,17 @@
   display: flex;
   gap: 15px;
   align-items: center;
-}
-
-.gap {
-  display: flex;
-  flex-basis: 66%;
-  height: 0;
-}
-
-.left {
-  background: #000;
-  justify-content: left;
-  justify-self: left;
+  justify-content: space-between;
 }
 
 .right {
-  justify-content: right;
-  justify-self: right;
+  display: flex;
+  align-items: center;
+  gap: 40px;
 }
 
 #toggle-container {
   align-items: center;
-  padding-right: 10px;
 }
 
 .break {
