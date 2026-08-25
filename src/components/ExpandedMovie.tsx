@@ -6,6 +6,7 @@ import { useState } from 'react';
 import type { UserRecommendationRequest } from '../../shared/user';
 import { Container, Row, Col } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { Break } from './FlexHelpers.tsx';
 
 interface ExpandedMovieProps {
   movie: SingleMovie;
@@ -122,17 +123,23 @@ const ExpandedMovieComponent: React.FC<ExpandedMovieProps> = ({ movie }) => {
 
     const posterUrl = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
         : '/assets/grey_square.jpg';
+    
+    const altText = movie.poster_path ? `The poster of the movie ${movie.title}` : '';
 
     return (
         <div className="expanded-movie">
-            <h2>{movie.title}</h2>
-            <img src={posterUrl}  />
-            <h3>{genreLabel}</h3>
-            <p>{movie.overview}</p>
+            <h1>{movie.title}</h1>
+            { (movie.release_date) && <p>Released {movie.release_date}</p> }
+            <img src={posterUrl} alt={altText} className='movie-poster' />
+            <div className='movie-description'>
+                <h3>{genreLabel}</h3>
+                <Break />
+                <p>{movie.overview}</p>
 
-            {user && <p>Rate this movie to add it to your watched list.</p>}
-            <button onClick={onLike}>I like this movie</button>
-            <button onClick={onDislike}>I dislike this movie</button>
+                {user && <p>Rate this movie to add it to your watched list.</p>}
+            </div>
+            <button onClick={onLike} id='like'>I like this movie</button>
+            <button onClick={onDislike} id='dislike'>I dislike this movie</button>
             {error && 
                 <div className="error">
                     <p>{error}</p>
@@ -150,7 +157,7 @@ const ExpandedMovieComponent: React.FC<ExpandedMovieProps> = ({ movie }) => {
                                             xs={12} sm={6} md={4} lg={3} xl={2}
                                         >
                                             <p>Ranking: {recommendedMovie.ranking}</p>
-                                            <button onClick={() => onRecMovieClick(recommendedMovie.movie.id)}>
+                                            <button className='mini-movie' onClick={() => onRecMovieClick(recommendedMovie.movie.id)}>
                                                 <MiniMovieCard movie={recommendedMovie.movie} />
                                             </button>
                                         </Col>

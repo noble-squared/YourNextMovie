@@ -1,16 +1,57 @@
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  --toggle-banner: #C44F00;
+  --toggle-text: #f3f4f6;
+  --toggle-text-h: #f3f4f6;
+  --toggle-bg: #300000;
+  --toggle-border: #2e303a;
+  --toggle-code-bg: #1f2028;
+  --toggle-accent: #c084fc;
+  --toggle-accent-bg: rgba(192, 132, 252, 0.15);
+  --toggle-accent-border: rgba(192, 132, 252, 0.5);
+  --toggle-shadow:
+    rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+  --toggle-social-bg: rgba(47, 48, 58, 0.5);
+  --toggle-link: #72F2DA;
+  --toggle-hover-link: #FFFFFF;
+  --toggle-secondary-bg: #3B0063;
+  --toggle-like: #115215;
+  --toggle-dislike: #9E2020;
 
+  --def-banner: #E36717;
+  --def-text: #000000;
+  --def-text-h: #08060d;
+  --def-bg: #FFE4AD;
+  --def-border: #e5e4e7;
+  --def-code-bg: #f4f3ec;
+  --def-accent: #aa3bff;
+  --def-accent-bg: rgba(170, 59, 255, 0.1);
+  --def-accent-border: rgba(170, 59, 255, 0.5);
+  --def-shadow:
+    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  --def-social-bg: rgba(244, 243, 236, 0.5);
+  --def-link: #073F5F;
+  --def-hover-link: #000000;
+  --def-secondary-bg: #F5CC73;
+  --def-like: #8FE396;
+  --def-dislike: #FF9191;
+
+  --banner: var(--def-banner);
+  --text: var(--def-text);
+  --text-h: var(--def-text-h);
+  --bg: var(--def-bg);
+  --border: var(--def-border);
+  --code-bg: var(--def-code-bg);
+  --accent: var(--def-accent);
+  --accent-bg: var(--def-accent-bg);
+  --accent-border: var(--def-accent-border);
+  --shadow: var(--def-shadow);
+  --social-bg: var(--def-social-bg);
+  --link: var(--def-link);
+  --hover-link: var(--def-hover-link);
+  --secondary-bg: var(--def-secondary-bg);
+  --like: var(--def-like);
+  --dislike: var(--def-dislike);
+  
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
@@ -32,17 +73,42 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
+    --def-banner: #C44F00;
+    --def-text: #f3f4f6;
+    --def-text-h: #f3f4f6;
+    --def-bg: #300000;
+    --def-border: #2e303a;
+    --def-code-bg: #1f2028;
+    --def-accent: #c084fc;
+    --def-accent-bg: rgba(192, 132, 252, 0.15);
+    --def-accent-border: rgba(192, 132, 252, 0.5);
+    --def-shadow:
       rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+    --def-social-bg: rgba(47, 48, 58, 0.5);
+    --def-link: #72F2DA;
+    /* Yes, the above is accessible. It has a 3.45:1 contrast, and links require a 3:1 contrast to satisfy AA requirements */
+    --def-hover-link: #FFFFFF;
+    --def-secondary-bg: #3B0063;
+    --def-like: #115215;
+    --def-dislike: #9E2020;
+
+    --toggle-banner: #E36717;
+    --toggle-text: #000000;
+    --toggle-text-h: #08060d;
+    --toggle-bg: #FFE4AD;
+    --toggle-border: #e5e4e7;
+    --toggle-code-bg: #f4f3ec;
+    --toggle-accent: #aa3bff;
+    --toggle-accent-bg: rgba(170, 59, 255, 0.1);
+    --toggle-accent-border: rgba(170, 59, 255, 0.5);
+    --toggle-shadow:
+      rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+    --toggle-social-bg: rgba(244, 243, 236, 0.5);
+    --toggle-link: #073F5F;
+    --toggle-hover-link: #000000;
+    --toggle-secondary-bg: #F5CC73;
+    --toggle-like: #8FE396;
+    --toggle-dislike: #FF9191;
   }
 
   #social .button-icon {
@@ -50,22 +116,46 @@
   }
 }
 
+:has(#color-toggle:checked){
+  --banner: var(--toggle-banner);
+  --text: var(--toggle-text);
+  --text-h: var(--toggle-text-h);
+  --bg: var(--toggle-bg);
+  --border: var(--toggle-border);
+  --code-bg: var(--toggle-code-bg);
+  --accent: var(--toggle-accent);
+  --accent-bg: var(--toggle-accent-bg);
+  --accent-border: var(--toggle-accent-border);
+  --shadow: var(--toggle-shadow);
+  --social-bg: var(--toggle-social-bg);
+  --link: var(--toggle-link);
+  --hover-link: var(--toggle-hover-link);
+  --secondary-bg: var(--toggle-secondary-bg);
+  --like: var(--toggle-like);
+  --dislike: var(--toggle-dislike);
+}
+
 #root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
   text-align: center;
-  border-inline: 1px solid var(--border);
   min-height: 100svh;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
 }
+
+#main-content {
+  width: 80%;
+  /*border-inline: 1px solid var(--border);*/
+  max-width: 100%;
+  margin: 0 auto;
+}
+
 /* After importing in the bootstrap styles, the background turned to white. I couldn't figure out why, so I had to ask AI here */
 body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
+  margin-bottom: 200px;
 }
 
 h1,
@@ -110,4 +200,27 @@ code {
   line-height: 135%;
   padding: 4px 8px;
   background: var(--code-bg);
+}
+
+a {
+  color: var(--link);
+  font-weight: bold;
+}
+
+a:hover {
+  color: var(--hover-link);
+}
+
+button,
+input, 
+select,
+option {
+  background: var(--secondary-bg);
+  color: var(--text);
+  margin: 10px;
+  padding: 5px;
+}
+
+button {
+  padding: 5px 20px;
 }
