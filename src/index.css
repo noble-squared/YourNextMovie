@@ -13,6 +13,9 @@
   --toggle-social-bg: rgba(47, 48, 58, 0.5);
   --toggle-link: #72F2DA;
   --toggle-hover-link: #FFFFFF;
+  --toggle-secondary-bg: #3B0063;
+  --toggle-like: #115215;
+  --toggle-dislike: #9E2020;
 
   --def-banner: #E36717;
   --def-text: #000000;
@@ -28,6 +31,9 @@
   --def-social-bg: rgba(244, 243, 236, 0.5);
   --def-link: #073F5F;
   --def-hover-link: #000000;
+  --def-secondary-bg: #F5CC73;
+  --def-like: #8FE396;
+  --def-dislike: #FF9191;
 
   --banner: var(--def-banner);
   --text: var(--def-text);
@@ -42,6 +48,9 @@
   --social-bg: var(--def-social-bg);
   --link: var(--def-link);
   --hover-link: var(--def-hover-link);
+  --secondary-bg: var(--def-secondary-bg);
+  --like: var(--def-like);
+  --dislike: var(--def-dislike);
   
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
@@ -79,6 +88,9 @@
     --def-link: #72F2DA;
     /* Yes, the above is accessible. It has a 3.45:1 contrast, and links require a 3:1 contrast to satisfy AA requirements */
     --def-hover-link: #FFFFFF;
+    --def-secondary-bg: #3B0063;
+    --def-like: #115215;
+    --def-dislike: #9E2020;
 
     --toggle-banner: #E36717;
     --toggle-text: #000000;
@@ -94,6 +106,9 @@
     --toggle-social-bg: rgba(244, 243, 236, 0.5);
     --toggle-link: #073F5F;
     --toggle-hover-link: #000000;
+    --toggle-secondary-bg: #F5CC73;
+    --toggle-like: #8FE396;
+    --toggle-dislike: #FF9191;
   }
 
   #social .button-icon {
@@ -115,6 +130,9 @@
   --social-bg: var(--toggle-social-bg);
   --link: var(--toggle-link);
   --hover-link: var(--toggle-hover-link);
+  --secondary-bg: var(--toggle-secondary-bg);
+  --like: var(--toggle-like);
+  --dislike: var(--toggle-dislike);
 }
 
 #root {
@@ -191,4 +209,11 @@ a {
 
 a:hover {
   color: var(--hover-link);
+}
+
+button {
+  background: var(--secondary-bg);
+  color: var(--text);
+  margin: 10px;
+  padding: 5px 20px;
 }

@@ -122,17 +122,19 @@ const ExpandedMovieComponent: React.FC<ExpandedMovieProps> = ({ movie }) => {
 
     const posterUrl = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
         : '/assets/grey_square.jpg';
+    
+    const altText = movie.poster_path ? `The poster of the movie ${movie.title}` : '';
 
     return (
         <div className="expanded-movie">
-            <h2>{movie.title}</h2>
-            <img src={posterUrl}  />
+            <h1>{movie.title}</h1>
+            <img src={posterUrl} alt={altText} className='movie-poster' />
             <h3>{genreLabel}</h3>
             <p>{movie.overview}</p>
 
             {user && <p>Rate this movie to add it to your watched list.</p>}
-            <button onClick={onLike}>I like this movie</button>
-            <button onClick={onDislike}>I dislike this movie</button>
+            <button onClick={onLike} id='like'>I like this movie</button>
+            <button onClick={onDislike} id='dislike'>I dislike this movie</button>
             {error && 
                 <div className="error">
                     <p>{error}</p>
