@@ -20,7 +20,7 @@
   --def-banner: #E36717;
   --def-text: #000000;
   --def-text-h: #08060d;
-  --def-bg: #FFEDC7;
+  --def-bg: #FFE4AD;
   --def-border: #e5e4e7;
   --def-code-bg: #f4f3ec;
   --def-accent: #aa3bff;
@@ -95,7 +95,7 @@
     --toggle-banner: #E36717;
     --toggle-text: #000000;
     --toggle-text-h: #08060d;
-    --toggle-bg: #FFEDC7;
+    --toggle-bg: #FFE4AD;
     --toggle-border: #e5e4e7;
     --toggle-code-bg: #f4f3ec;
     --toggle-accent: #aa3bff;
@@ -211,9 +211,16 @@ a:hover {
   color: var(--hover-link);
 }
 
-button {
+button,
+input, 
+select,
+option {
   background: var(--secondary-bg);
   color: var(--text);
   margin: 10px;
+  padding: 5px;
+}
+
+button {
   padding: 5px 20px;
 }

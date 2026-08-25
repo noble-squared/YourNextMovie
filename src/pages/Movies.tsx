@@ -109,7 +109,7 @@ const MoviesPage: React.FC = () => {
                                 <Col key={movie.id}
                                     xs={12} sm={6} md={4} lg={3} xl={2}
                                 >
-                                    <button onClick={() => navigate(`/movie/${movie.id ? movie.id : 268}`)}>
+                                    <button className='mini-movie' onClick={() => navigate(`/movie/${movie.id ? movie.id : 268}`)}>
                                         <MiniMovieCard movie={movie} />
                                     </button>
                                 </Col>
@@ -187,11 +187,11 @@ const MoviesPage: React.FC = () => {
                                 />
                                 {user ? (
                                     <div className="label">
-                                        Defaults to your profile preference.
+                                        <small>Defaults to your profile preference.</small>
                                     </div>
                                 ) : (
                                     <div className="label">
-                                        Disabled by default unless you turn it on.
+                                        <small>Adult movies hidden by default.</small>
                                     </div>
                                 )}
                             </div>

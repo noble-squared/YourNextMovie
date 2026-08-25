@@ -6,6 +6,7 @@ import { useState } from 'react';
 import type { UserRecommendationRequest } from '../../shared/user';
 import { Container, Row, Col } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { Break } from './FlexHelpers.tsx';
 
 interface ExpandedMovieProps {
   movie: SingleMovie;
@@ -128,11 +129,15 @@ const ExpandedMovieComponent: React.FC<ExpandedMovieProps> = ({ movie }) => {
     return (
         <div className="expanded-movie">
             <h1>{movie.title}</h1>
+            { (movie.release_date) && <p>Released {movie.release_date}</p> }
             <img src={posterUrl} alt={altText} className='movie-poster' />
-            <h3>{genreLabel}</h3>
-            <p>{movie.overview}</p>
+            <div className='movie-description'>
+                <h3>{genreLabel}</h3>
+                <Break />
+                <p>{movie.overview}</p>
 
-            {user && <p>Rate this movie to add it to your watched list.</p>}
+                {user && <p>Rate this movie to add it to your watched list.</p>}
+            </div>
             <button onClick={onLike} id='like'>I like this movie</button>
             <button onClick={onDislike} id='dislike'>I dislike this movie</button>
             {error && 
@@ -152,7 +157,7 @@ const ExpandedMovieComponent: React.FC<ExpandedMovieProps> = ({ movie }) => {
                                             xs={12} sm={6} md={4} lg={3} xl={2}
                                         >
                                             <p>Ranking: {recommendedMovie.ranking}</p>
-                                            <button onClick={() => onRecMovieClick(recommendedMovie.movie.id)}>
+                                            <button className='mini-movie' onClick={() => onRecMovieClick(recommendedMovie.movie.id)}>
                                                 <MiniMovieCard movie={recommendedMovie.movie} />
                                             </button>
                                         </Col>
